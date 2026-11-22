@@ -1,0 +1,17 @@
+http:
+  routers:
+    dashboard:
+      rule: "Host(`traefik.meiyou.io`)"
+      entryPoints:
+        - websecure
+      service: api@internal
+      middlewares:
+        - auth
+      tls:
+        certResolver: websecure
+
+  middlewares:
+    auth:
+      basicAuth:
+        users:
+          - ${TRAEFIK_BASICAUTH_ADMIN}

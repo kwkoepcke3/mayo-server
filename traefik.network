@@ -1,0 +1,8 @@
+[Unit]
+Description=Traefik network
+
+[Network]
+NetworkName=traefik.network
+
+[Install]
+WantedBy=default.target

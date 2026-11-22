@@ -1,0 +1,48 @@
+[Unit]
+Description=Traefik Reverse Proxy
+After=network-online.target podman.socket
+Wants=network-online.target
+Requires=podman.socket
+
+[Container]
+ContainerName=traefik
+Image=docker.io/library/traefik:v3.7
+Network=traefik.network
+NoNewPrivileges=true
+SecurityLabelDisable=true
+
+# Load EMAIL and CF_API_TOKEN for both container env and Exec= expansion
+EnvironmentFile=%h/.config/containers/systemd/traefik.env
+
+PublishPort=80:80
+PublishPort=443:443
+
+# Drop in replacement for docker engine
+Volume=%t/podman/podman.sock:/var/run/docker.sock:ro
+Volume=%h/mayo-server/runtime/traefik/letsencrypt:/letsencrypt:Z
+Volume=%h/mayo-server/runtime/traefik:/etc/traefik/runtime:Z
+Volume=%h/mayo-server/data/traefik:/etc/traefik/data:Z
+
+Exec=--providers.docker=true \
+     --providers.docker.exposedbydefault=false \
+     --entryPoints.websecure.address=:443 \
+     --entryPoints.websecure.http.tls=true \
+     --entryPoints.web.address=:80 \
+     --entryPoints.web.http.redirections.entrypoint.to=websecure \
+     --entryPoints.web.http.redirections.entrypoint.scheme=https \
+     --certificatesResolvers.websecure.acme.dnsChallenge.provider=cloudflare \
+     --certificatesResolvers.websecure.acme.email=${EMAIL} \
+     --certificatesResolvers.websecure.acme.storage=/letsencrypt/acme.json \
+     --api=true \
+     --api.dashboard=true \
+     --providers.file.filename=/etc/traefik/runtime/dynamic.yml
+# staging environment for letsencrypt     
+#      --certificatesResolvers.websecure.acme.caServer=https://acme-staging-v02.api.letsencrypt.org/directory
+
+[Service]
+Restart=always
+EnvironmentFile=%h/.config/containers/systemd/traefik.env
+ExecStartPre=/usr/bin/bash -c "set -a; . %h/.config/containers/systemd/traefik.env; set +a; envsubst '\$TRAEFIK_BASICAUTH_ADMIN' < %h/mayo-server/data/traefik/dynamic.yml.tmpl > %h/mayo-server/runtime/traefik/dynamic.yml"
+
+[Install]
+WantedBy=default.target

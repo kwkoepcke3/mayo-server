@@ -1,0 +1,3 @@
+[submodule "jellyfin"]
+	path = subserv/jellyfin
+	url = git@github.com:kwkoepcke3/jellyfin-server.git
