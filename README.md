@@ -10,5 +10,6 @@ sudo loginctl enable-linger ${USER}
 ```
 
 ## Traefik
-+ EMAIL
-+ CF\_API\_TOKEN
++ $CLOUDFLARE\_EMAIL='example@example.com'
++ $CLOUDFLARE\_DNS\_API\_TOKEN='exampleexampleexample'
++ $TRAEFIK\_BASICAUTH\_ADMIN='example:example'
