@@ -1,3 +1,9 @@
 [submodule "jellyfin"]
 	path = subserv/jellyfin
 	url = git@github.com:kwkoepcke3/jellyfin-server.git
+[submodule "subserv/tailscale"]
+	path = subserv/tailscale
+	url = git@github.com:kwkoepcke3/headscale-client.git
+[submodule "subserv/headscale"]
+	path = subserv/headscale
+	url = git@github.com:kwkoepcke3/headscale-server.git
