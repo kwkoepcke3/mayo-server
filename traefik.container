@@ -7,7 +7,10 @@ Requires=podman.socket
 [Container]
 ContainerName=traefik
 Image=docker.io/library/traefik:v3.7
+
+AddHost=host.containers.internal:host-gateway
 Network=traefik.network
+
 NoNewPrivileges=true
 SecurityLabelDisable=true
 
