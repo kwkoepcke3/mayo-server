@@ -31,7 +31,7 @@ Exec=--providers.docker=true \
      --entryPoints.web.http.redirections.entrypoint.to=websecure \
      --entryPoints.web.http.redirections.entrypoint.scheme=https \
      --certificatesResolvers.websecure.acme.dnsChallenge.provider=cloudflare \
-     --certificatesResolvers.websecure.acme.email=${EMAIL} \
+     --certificatesResolvers.websecure.acme.email=${CLOUDFLARE_EMAIL} \
      --certificatesResolvers.websecure.acme.storage=/letsencrypt/acme.json \
      --api=true \
      --api.dashboard=true \
@@ -42,7 +42,7 @@ Exec=--providers.docker=true \
 [Service]
 Restart=always
 EnvironmentFile=%h/.config/containers/systemd/traefik.env
-ExecStartPre=/usr/bin/bash -c "set -a; . %h/.config/containers/systemd/traefik.env; set +a; envsubst '\$TRAEFIK_BASICAUTH_ADMIN' < %h/mayo-server/data/traefik/dynamic.yml.tmpl > %h/mayo-server/runtime/traefik/dynamic.yml"
+ExecStartPre=%h/mayo-server/tools/render-traefik.sh
 
 [Install]
 WantedBy=default.target
